@@ -36,7 +36,7 @@ def mars_news(browser):
     browser.visit(url)
 
     # Optional delay for loading the page
-    browser.is_element_present_by_css('div.list_text', wait_time=1)
+    browser.is_element_present_by_css('div.list_text', wait_time=3)
 
     # Convert the browser html to a soup object and then quit the browser
     html = browser.html
@@ -50,7 +50,8 @@ def mars_news(browser):
         # Use the parent element to find the paragraph text
         news_p = slide_elem.find('div', class_='article_teaser_body').get_text()
 
-    except AttributeError:
+    except AttributeError as e:
+        print(e)
         return None, None
 
     return news_title, news_p
@@ -92,11 +93,15 @@ def mars_facts():
         return None
 
     # Assign columns and set index of dataframe
-    df.columns=['Description', 'Mars', 'Earth']
-    df.set_index('Description', inplace=True)
+    df.columns = df.iloc[0]
+    df = df[1:]
+    #df.reset_index(drop=True, inplace=True)
+    df.set_index('Mars - Earth Comparison', inplace=True)
+    df.index.name = None
+    # df.reset_index()
 
     # Convert dataframe into HTML format, add bootstrap
-    return df.to_html(classes="table table-striped")
+    return df.to_html(classes="table table-responsive table-striped table-hover")
 
 def mars_hemispheres(browser):
     # Visit URL
